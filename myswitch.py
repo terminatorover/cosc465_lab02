@@ -28,16 +28,17 @@ def srpy_main(net):
         except SrpyShutdown:
             # we're done; bail out of while loop
             break 
-        myint_names = [intf.name for intf in  net.interfaces()]#names of my interfaces
+        myint_names = [intf.name for intf in  net.interfaces()]#names of my interfaces(aka ports)
+        myint_addr = [intf.ethaddr for intf in  net.interfaces()]#names of my interfaces(ethernet adresses)
         dest = packet.dst
         src = packet.src
-        know [dest] = intf.name #JUST LEARNED SOMETHING 
-        if dest in myint_names:
+        know [src] = dev #JUST LEARNED SOMETHING 
+        if dest in myint_addr:
             #then the packet was for us so we drop it like its ...hot
             continue 
         else:#check if its broadcast or don't know where to send it
-            if dest == "FF:FF:FF:FF:FF:FF" or not(dest in know):
-                [send_packet(name,packet) for name in myin_names if name!= dev]
+            if dest == ETHER_BROADCAST or not(dest in know):
+                [send_packet(name,packet) for name in myint_names if name!= dev]
             else: #not broadcast and know where to send it 
                 send_packet(know[dest],packet)
 
