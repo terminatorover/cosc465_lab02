@@ -17,18 +17,31 @@ from srpy_common import log_info, log_debug, SrpyShutdown, SrpyNoPackets
 def srpy_main(net):
 
     # any setup/initialization code
-
+    know = {}
     while True:
         try:
             dev,ts,packet = net.recv_packet(timeout=1.0)
         except SrpyNoPackets:
             # timeout waiting for packet arrival
+            
             continue
         except SrpyShutdown:
             # we're done; bail out of while loop
-            return
+            break 
+        myint_names = [intf.name for intf in  net.interfaces()]#names of my interfaces
+        dest = packet.dst
+        src = packet.src
+        know [dest] = intf.name #JUST LEARNED SOMETHING 
+        if dest in myint_names:
+            #then the packet was for us so we drop it like its ...hot
+            continue 
+        else:#check if its broadcast or don't know where to send it
+            if dest == "FF:FF:FF:FF:FF:FF" or not(dest in know):
+                [send_packet(name,packet) for name in myin_names if name!= dev]
+            else: #not broadcast and know where to send it 
+                send_packet(know[dest],packet)
 
-
+                
 
 
 
