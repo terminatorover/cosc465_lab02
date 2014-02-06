@@ -38,9 +38,9 @@ def srpy_main(net):
             continue 
         else:#check if its broadcast or don't know where to send it
             if dest == ETHER_BROADCAST or not(dest in know):
-                [send_packet(name,packet) for name in myint_names if name!= dev]
+                [net.send_packet(name,packet) for name in myint_names if name!= dev]
             else: #not broadcast and know where to send it 
-                send_packet(know[dest],packet)
+                net.send_packet(know[dest],packet)
 
                 
 
